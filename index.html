@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="theme-color" content="#1B3A6B"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<title>CBD OAT Study — CIP Ranchi</title>
+<link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="icon.svg"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="OAT Study"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --navy:#1B3A6B; --teal:#1D7874; --gold:#C9A84C;
+    --green:#1A7A4A; --red:#C0392B; --orange:#D35400;
+    --purple:#6C3483; --grey:#5A6472;
+    --lgreen:#E8F5EE; --lred:#FDECEA; --lyel:#FFFBEA;
+    --bg:#F0F3F8; --card:#FFFFFF;
+    --radius:14px; --shadow:0 2px 12px rgba(0,0,0,.1);
+    --font:'DM Sans',sans-serif; --mono:'DM Mono',monospace;
+    --safe-bottom:env(safe-area-inset-bottom, 0px);
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  html,body { height:100%; overflow:hidden; font-family:var(--font); background:var(--bg); }
+
+  /* ── Layout ─────────────────────────────────────────── */
+  #app { display:flex; flex-direction:column; height:100dvh; }
+
+  /* ── Top bar ─────────────────────────────────────────── */
+  #topbar {
+    background:var(--navy); color:#fff;
+    padding:14px 16px 10px;
+    display:flex; align-items:center; justify-content:space-between;
+    flex-shrink:0; z-index:50;
+  }
+  #topbar h1 { font-size:15px; font-weight:700; letter-spacing:-.2px; }
+  #topbar .sub { font-size:11px; opacity:.7; margin-top:1px; }
+  .counts { display:flex; gap:6px; align-items:center; }
+  .cnt-badge {
+    background:rgba(255,255,255,.15); border-radius:20px;
+    padding:3px 9px; font-size:11px; font-weight:600;
+  }
+  .cnt-badge.a { background:#1A7A4A; }
+  .cnt-badge.b { background:#C0392B; }
+
+  /* ── Scrollable content ──────────────────────────────── */
+  #content {
+    flex:1; overflow-y:auto; overflow-x:hidden;
+    -webkit-overflow-scrolling:touch;
+    padding:12px 12px calc(80px + var(--safe-bottom));
+  }
+
+  /* ── Bottom nav ──────────────────────────────────────── */
+  #botnav {
+    position:fixed; bottom:0; left:0; right:0;
+    background:#fff; border-top:1px solid #E0E4EC;
+    display:flex; padding-bottom:var(--safe-bottom);
+    z-index:100; box-shadow:0 -2px 12px rgba(0,0,0,.08);
+  }
+  .nav-btn {
+    flex:1; border:none; background:none;
+    padding:10px 4px 8px; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    font-family:var(--font); transition:all .15s;
+  }
+  .nav-btn .icon { font-size:20px; line-height:1; }
+  .nav-btn .lbl { font-size:10px; font-weight:600; color:#8A93A2; }
+  .nav-btn.active .lbl { color:var(--navy); }
+  .nav-btn.active .icon { filter:saturate(2); }
+  .nav-btn.active { border-top:2px solid var(--navy); }
+
+  /* ── Cards ───────────────────────────────────────────── */
+  .card {
+    background:var(--card); border-radius:var(--radius);
+    box-shadow:var(--shadow); margin-bottom:10px; overflow:hidden;
+  }
+  .card-hdr {
+    padding:12px 14px; font-size:13px; font-weight:700;
+    color:#fff; display:flex; align-items:center;
+    justify-content:space-between;
+  }
+  .card-body { padding:12px 14px; }
+
+  /* ── Buttons ─────────────────────────────────────────── */
+  .btn {
+    border:none; border-radius:10px; padding:11px 18px;
+    font-family:var(--font); font-weight:700; font-size:13px;
+    cursor:pointer; transition:all .15s; display:inline-flex;
+    align-items:center; gap:6px;
+  }
+  .btn-primary { background:var(--teal); color:#fff; }
+  .btn-navy    { background:var(--navy); color:#fff; }
+  .btn-green   { background:var(--green); color:#fff; }
+  .btn-red     { background:var(--red); color:#fff; }
+  .btn-outline { background:#fff; border:2px solid var(--navy); color:var(--navy); }
+  .btn-sm { padding:6px 12px; font-size:12px; border-radius:8px; }
+  .btn:active { transform:scale(.97); opacity:.9; }
+  .btn-full { width:100%; justify-content:center; }
+
+  /* ── Form fields ─────────────────────────────────────── */
+  .field { margin-bottom:12px; }
+  .field label { display:block; font-size:11px; font-weight:600;
+    color:var(--grey); margin-bottom:4px; text-transform:uppercase;
+    letter-spacing:.4px; }
+  .field input, .field select, .field textarea {
+    width:100%; padding:11px 13px; border:1.5px solid #DDE1EA;
+    border-radius:10px; font-family:var(--font); font-size:14px;
+    background:#fff; transition:border-color .15s; outline:none;
+    -webkit-appearance:none;
+  }
+  .field input:focus, .field select:focus { border-color:var(--teal); }
+  .field .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .field .grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+
+  /* ── Score input ─────────────────────────────────────── */
+  .score-row {
+    display:flex; align-items:center; padding:10px 0;
+    border-bottom:1px solid #F0F3F8; gap:10px;
+  }
+  .score-row:last-child { border-bottom:none; }
+  .score-label { flex:1; }
+  .score-label .name { font-size:13px; font-weight:600; }
+  .score-label .range { font-size:10px; color:var(--grey); margin-top:1px; }
+  .score-input-wrap { display:flex; align-items:center; gap:8px; }
+  .score-input {
+    width:72px; padding:9px 8px; text-align:center;
+    border:1.5px solid #DDE1EA; border-radius:9px;
+    font-family:var(--mono); font-size:16px; font-weight:500;
+    outline:none; -webkit-appearance:none;
+    transition:border-color .15s;
+  }
+  .score-input:focus { border-color:var(--teal); }
+  .score-input.filled { background:var(--lyel); border-color:var(--gold); }
+  .delta-pill {
+    padding:3px 8px; border-radius:20px; font-size:11px;
+    font-weight:700; font-family:var(--mono); min-width:44px;
+    text-align:center;
+  }
+  .delta-down { background:var(--lgreen); color:var(--green); }
+  .delta-up   { background:var(--lred);   color:var(--red); }
+  .delta-zero { background:#F0F3F8; color:var(--grey); }
+
+  /* ── TP tabs ─────────────────────────────────────────── */
+  .tp-tabs {
+    display:flex; gap:6px; padding:0 0 12px; overflow-x:auto;
+    scrollbar-width:none; -webkit-overflow-scrolling:touch;
+  }
+  .tp-tabs::-webkit-scrollbar { display:none; }
+  .tp-tab {
+    flex-shrink:0; padding:7px 14px; border-radius:20px;
+    font-size:12px; font-weight:700; border:2px solid transparent;
+    cursor:pointer; transition:all .15s; background:#E8EDF4;
+    color:var(--grey);
+  }
+  .tp-tab.active { color:#fff; border-color:transparent; }
+  .tp-tab.done { position:relative; }
+  .tp-tab.done::after {
+    content:'✓'; position:absolute; top:-4px; right:-4px;
+    background:var(--green); color:#fff; border-radius:50%;
+    width:14px; height:14px; font-size:9px;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  /* ── Patient card ────────────────────────────────────── */
+  .pt-card {
+    background:#fff; border-radius:var(--radius);
+    box-shadow:var(--shadow); margin-bottom:10px;
+    overflow:hidden; border-left:4px solid transparent;
+  }
+  .pt-card.grpA { border-left-color:var(--green); }
+  .pt-card.grpB { border-left-color:var(--red); }
+  .pt-card-top {
+    padding:12px 14px; display:flex; align-items:center; gap:12px;
+  }
+  .pt-avatar {
+    width:42px; height:42px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:17px; color:#fff;
+  }
+  .pt-info { flex:1; min-width:0; }
+  .pt-name { font-size:14px; font-weight:700;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pt-meta { font-size:11px; color:var(--grey); margin-top:2px; }
+  .pt-prog { display:flex; gap:4px; padding:0 14px 12px; }
+  .pt-prog-dot {
+    width:32px; height:22px; border-radius:6px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:9px; font-weight:700; color:#fff; flex-shrink:0;
+  }
+
+  /* ── Stats ───────────────────────────────────────────── */
+  .stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+  .stat-box {
+    background:#fff; border-radius:12px; padding:12px 14px;
+    box-shadow:var(--shadow); text-align:center;
+  }
+  .stat-val { font-size:28px; font-weight:800; font-family:var(--mono); }
+  .stat-lbl { font-size:11px; font-weight:600; color:var(--grey); margin-top:2px; }
+  .stat-sub { font-size:10px; color:var(--grey); margin-top:1px; }
+
+  /* ── Analysis table ──────────────────────────────────── */
+  .analysis-table { width:100%; border-collapse:collapse; font-size:11px; }
+  .analysis-table th {
+    background:var(--navy); color:#fff; padding:7px 8px;
+    text-align:left; font-weight:700; white-space:nowrap;
+  }
+  .analysis-table td {
+    padding:6px 8px; border-bottom:1px solid #EEF1F6;
+    vertical-align:middle;
+  }
+  .analysis-table tr:nth-child(even) td { background:#F5F7FC; }
+
+  .p-sig    { color:var(--green); font-weight:700; font-family:var(--mono); }
+  .p-insig  { color:var(--grey);  font-family:var(--mono); }
+  .p-highly { color:var(--teal);  font-weight:800; font-family:var(--mono); }
+
+  /* ── AE badge ────────────────────────────────────────── */
+  .sev-badge {
+    display:inline-block; padding:2px 8px; border-radius:10px;
+    font-size:11px; font-weight:700;
+  }
+  .sev-1 { background:#FFF3CD; color:#856404; }
+  .sev-2 { background:#FFE0B2; color:#E65100; }
+  .sev-3 { background:#FFEBEE; color:#C62828; animation:pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+
+  /* ── Empty state ─────────────────────────────────────── */
+  .empty {
+    text-align:center; padding:50px 20px; color:var(--grey);
+    background:#fff; border-radius:var(--radius);
+    box-shadow:var(--shadow);
+  }
+  .empty .icon { font-size:48px; margin-bottom:12px; }
+  .empty h3 { font-size:16px; font-weight:700; margin-bottom:6px; color:#2D3748; }
+  .empty p  { font-size:13px; line-height:1.5; }
+
+  /* ── Modal ───────────────────────────────────────────── */
+  .modal-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,.5);
+    z-index:200; display:flex; align-items:flex-end;
+    animation:fadeIn .2s;
+  }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  .modal {
+    background:#fff; width:100%; max-height:90dvh;
+    border-radius:var(--radius) var(--radius) 0 0;
+    overflow-y:auto; padding:16px;
+    animation:slideUp .25s ease-out;
+  }
+  @keyframes slideUp { from{transform:translateY(60px);opacity:0} to{transform:none;opacity:1} }
+  .modal-hdr {
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:16px;
+  }
+  .modal-hdr h2 { font-size:16px; font-weight:700; }
+  .modal-close {
+    width:32px; height:32px; border:none; background:#F0F3F8;
+    border-radius:50%; font-size:18px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  /* ── Export options ──────────────────────────────────── */
+  .export-opt {
+    background:#fff; border-radius:12px; padding:14px;
+    margin-bottom:8px; display:flex; align-items:center;
+    gap:12px; box-shadow:var(--shadow); cursor:pointer;
+    border:1.5px solid transparent; transition:all .15s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .export-opt:active { border-color:var(--teal); background:var(--lyel); }
+  .export-icon { font-size:28px; flex-shrink:0; }
+  .export-label { font-size:13px; font-weight:700; }
+  .export-desc  { font-size:11px; color:var(--grey); margin-top:2px; }
+
+  /* ── Section title ───────────────────────────────────── */
+  .sec-title {
+    font-size:11px; font-weight:700; letter-spacing:.8px;
+    text-transform:uppercase; color:var(--grey);
+    margin:16px 0 8px; padding-left:2px;
+  }
+
+  /* ── Toast ───────────────────────────────────────────── */
+  #toast {
+    position:fixed; bottom:calc(72px + var(--safe-bottom) + 8px);
+    left:50%; transform:translateX(-50%) translateY(20px);
+    background:#2D3748; color:#fff; padding:10px 20px;
+    border-radius:20px; font-size:13px; font-weight:600;
+    opacity:0; transition:all .3s; z-index:300;
+    white-space:nowrap; pointer-events:none;
+  }
+  #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div id="install-banner" style="display:none;position:fixed;top:0;left:0;right:0;
+  z-index:999;background:#C9A84C;padding:10px 16px;align-items:center;
+  justify-content:space-between;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.3)">
+  <div style="display:flex;align-items:center;gap:10px;flex:1">
+    <span style="font-size:22px">📲</span>
+    <div>
+      <div style="font-size:13px;font-weight:700;color:#1B3A6B">Install CBD OAT Study</div>
+      <div style="font-size:11px;color:#2D3748">Add to home screen — works offline</div>
+    </div>
+  </div>
+  <button onclick="triggerInstall()" style="background:#1B3A6B;color:white;border:none;
+    padding:8px 16px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;
+    white-space:nowrap">Install ✓</button>
+  <button onclick="document.getElementById('install-banner').style.display='none'"
+    style="background:none;border:none;font-size:20px;cursor:pointer;color:#1B3A6B;
+    padding:0 4px">✕</button>
+</div>
+<div id="app">
+  <div id="topbar">
+    <div>
+      <h1>CBD OAT Study</h1>
+      <div class="sub">CIP Ranchi — Dr Arashdeep Singh</div>
+    </div>
+    <div class="counts">
+      <span class="cnt-badge a" id="cnt-a">A: 0</span>
+      <span class="cnt-badge b" id="cnt-b">B: 0</span>
+    </div>
+  </div>
+
+  <div id="content"></div>
+
+  <nav id="botnav">
+    <button class="nav-btn active" onclick="showTab('patients')" id="tab-patients">
+      <span class="icon">👥</span><span class="lbl">Patients</span>
+    </button>
+    <button class="nav-btn" onclick="showTab('scores')" id="tab-scores">
+      <span class="icon">📝</span><span class="lbl">Scores</span>
+    </button>
+    <button class="nav-btn" onclick="showTab('summary')" id="tab-summary">
+      <span class="icon">📊</span><span class="lbl">Summary</span>
+    </button>
+    <button class="nav-btn" onclick="showTab('analysis')" id="tab-analysis">
+      <span class="icon">🔬</span><span class="lbl">Analysis</span>
+    </button>
+    <button class="nav-btn" onclick="showTab('export')" id="tab-export">
+      <span class="icon">💾</span><span class="lbl">Export</span>
+    </button>
+  </nav>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── Data ─────────────────────────────────────────────────────────────
+const TP     = ["D0","D1","D2","D3","D10"];
+const TP_LBL = ["D0 Baseline","D1 Post-1","D2 Post-2","D3 Post-3","D10 Follow-up"];
+const TP_CLR = ["#1B3A6B","#1D7874","#1A7A4A","#D35400","#6C3483"];
+const SCALES = ["COWS","VAS Pain","VAS Distress","DDQ","OCDUS","HCQ HOF","HAM-A"];
+const S_MAX  = [48,100,100,98,48,7,56];
+const S_CLR  = ["#1B3A6B","#1D7874","#1D7874","#1A7A4A","#D35400","#6C3483","#C0392B"];
+const S_INFO = {
+  "COWS":        {r:"0–48",  i:"5–12 Mild · 13–24 Mod · 25–36 Mod-Severe · >36 Severe"},
+  "VAS Pain":    {r:"0–100mm",i:"Mark on 100mm line — measure with ruler"},
+  "VAS Distress":{r:"0–100mm",i:"Withdrawal discomfort — separate line"},
+  "DDQ":         {r:"14–98", i:"State craving RIGHT NOW — 7-point Likert × 14"},
+  "OCDUS":       {r:"0–48",  i:"Past WEEK obsessive drug thoughts — 12 items"},
+  "HCQ HOF":     {r:"1–7",   i:"Enter: (sum items 2–14 ÷ 13). Reverse items 1,5,8,9,10,14"},
+  "HAM-A":       {r:"0–56",  i:"Clinician-rated · ≤17 Mild · 18–24 Mild-Mod · >30 Severe"},
+};
+
+let state = {
+  patients: [],
+  tab: "patients",
+  selPt: null,
+  selTP: "D0",
+  modal: null,
+  editId: null,
+};
+
+function save() {
+  try { localStorage.setItem("cip_oat_data", JSON.stringify(state.patients)); }
+  catch(e) {}
+}
+function load() {
+  try {
+    const d = localStorage.getItem("cip_oat_data");
+    if(d) state.patients = JSON.parse(d);
+  } catch(e) {}
+}
+
+function makePt() {
+  return {
+    id: Date.now().toString(),
+    crf:"", pid:"", group:"A", age:"", sex:"M",
+    opioid:"Heroin", dur:"", date:"", notes:"",
+    scores: Object.fromEntries(TP.map(tp=>[tp,
+      Object.fromEntries(SCALES.map(s=>[s,""]))
+    ])),
+    aes: [],
+  };
+}
+
+// ── Stats ─────────────────────────────────────────────────────────────
+const mean = a => a.length ? a.reduce((x,y)=>x+y,0)/a.length : null;
+const sd = a => {
+  if(a.length<2) return null;
+  const m=mean(a);
+  return Math.sqrt(a.reduce((x,y)=>x+(y-m)**2,0)/(a.length-1));
+};
+const tTest = (a,b) => {
+  if(a.length<2||b.length<2) return null;
+  const ma=mean(a),mb=mean(b),sa=sd(a)||0.001,sb=sd(b)||0.001;
+  const se=Math.sqrt(sa**2/a.length+sb**2/b.length);
+  if(se===0) return null;
+  const t=(ma-mb)/se;
+  const df=((sa**2/a.length+sb**2/b.length)**2)/
+    ((sa**2/a.length)**2/(a.length-1)+(sb**2/b.length)**2/(b.length-1));
+  const p=2*(1-tCDF(Math.abs(t),df));
+  const d=Math.abs(ma-mb)/Math.sqrt((sa**2+sb**2)/2);
+  return {t:t.toFixed(3),p:p.toFixed(4),df:df.toFixed(1),d:d.toFixed(3)};
+};
+function tCDF(t,df){
+  const x=df/(df+t*t);
+  let r=0,term=1;
+  for(let i=0;i<100;i++){r+=term;term*=x*(df/2+i)/((1/2+i+1)*(i+1));}
+  return 1-0.5*Math.pow(x,df/2)*Math.pow(1-x,0.5)*r/beta(df/2,0.5);
+}
+function beta(a,b){
+  let s=0;
+  for(let i=0;i<1000;i++){const t=i/1000;s+=Math.pow(t,a-1)*Math.pow(1-t,b-1)/1000;}
+  return s;
+}
+const wilcox = (pre,post) => {
+  const d=pre.map((v,i)=>post[i]-v).filter(x=>x!==0);
+  if(!d.length) return null;
+  const p=d.filter(x=>x>0).length,n=d.length;
+  const z=(p-n/2)/Math.sqrt(n/4);
+  const pval=2*(1-normCDF(Math.abs(z)));
+  return {z:z.toFixed(3),p:pval.toFixed(4)};
+};
+function normCDF(z){return 0.5*(1+erf(z/Math.SQRT2));}
+function erf(x){
+  const t=1/(1+0.3275911*Math.abs(x));
+  const y=1-((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t*0.254829592*Math.exp(-x*x);
+  return x>=0?y:-y;
+}
+function cohenD(a,b){
+  if(a.length<2||b.length<2) return null;
+  const p=Math.sqrt(((sd(a)||0)**2+(sd(b)||0)**2)/2);
+  return p>0?Math.abs(mean(a)-mean(b))/p:null;
+}
+function fmtP(p){
+  if(p===null||p===undefined) return "—";
+  const n=parseFloat(p);
+  if(n<0.001) return `<span class="p-highly">&lt;0.001 ***</span>`;
+  if(n<0.01)  return `<span class="p-sig">${n.toFixed(3)} **</span>`;
+  if(n<0.05)  return `<span class="p-sig">${n.toFixed(3)} *</span>`;
+  return `<span class="p-insig">${n.toFixed(3)} ns</span>`;
+}
+function getScores(grp,sc,tp){
+  return grp.map(p=>p.scores[tp]?.[sc])
+    .filter(v=>v!==""&&v!==undefined&&!isNaN(Number(v))).map(Number);
+}
+
+// ── UI helpers ────────────────────────────────────────────────────────
+function toast(msg, dur=2200) {
+  const el=document.getElementById("toast");
+  el.textContent=msg; el.classList.add("show");
+  setTimeout(()=>el.classList.remove("show"),dur);
+}
+
+function updateCounts() {
+  const a=state.patients.filter(p=>p.group==="A").length;
+  const b=state.patients.filter(p=>p.group==="B").length;
+  document.getElementById("cnt-a").textContent=`A: ${a}`;
+  document.getElementById("cnt-b").textContent=`B: ${b}`;
+}
+
+function showTab(tab) {
+  state.tab = tab;
+  document.querySelectorAll(".nav-btn").forEach(b=>{
+    b.classList.toggle("active", b.id==="tab-"+tab);
+  });
+  render();
+}
+
+function render() {
+  updateCounts();
+  const c = document.getElementById("content");
+  const t = state.tab;
+  if(t==="patients") c.innerHTML = renderPatients();
+  else if(t==="scores")   c.innerHTML = renderScores();
+  else if(t==="summary")  c.innerHTML = renderSummary();
+  else if(t==="analysis") c.innerHTML = renderAnalysis();
+  else if(t==="export")   c.innerHTML = renderExport();
+}
+
+// ── Patients tab ──────────────────────────────────────────────────────
+function renderPatients() {
+  const pts = state.patients;
+  let h = `<div class="sec-title">Enrolled Patients</div>`;
+  h += `<button class="btn btn-primary btn-full" onclick="addPatient()">
+    <span style="font-size:18px">+</span> Add New Patient
+  </button>`;
+
+  if(!pts.length) {
+    h += `<div class="empty" style="margin-top:12px">
+      <div class="icon">🏥</div>
+      <h3>No patients yet</h3>
+      <p>Tap "+ Add New Patient" to enrol your first study participant</p>
+    </div>`;
+    return h;
+  }
+
+  h += `<div style="margin-top:10px">`;
+  pts.forEach(p => {
+    const grpClr = p.group==="A" ? "#1A7A4A" : "#C0392B";
+    const doneCount = TP.filter(tp=>SCALES.some(s=>p.scores[tp]?.[s]!=="")).length;
+    h += `<div class="pt-card grp${p.group}">
+      <div class="pt-card-top">
+        <div class="pt-avatar" style="background:${grpClr}">${p.group}</div>
+        <div class="pt-info">
+          <div class="pt-name">${p.pid||"(unnamed)"} <span style="font-weight:400;color:var(--grey);font-size:12px">CRF: ${p.crf||"—"}</span></div>
+          <div class="pt-meta">
+            ${p.age?`Age ${p.age} · `:""}${p.sex} · ${p.opioid}
+            ${p.dur?` · ${p.dur}m`:""}
+            ${p.date?` · ${p.date}`:""}
+          </div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-sm" style="background:${grpClr};color:#fff"
+            onclick="selAndScore('${p.id}')">Score</button>
+          <button class="btn btn-sm btn-outline" onclick="editPatient('${p.id}')">Edit</button>
+        </div>
+      </div>
+      <div class="pt-prog">
+        ${TP.map((tp,i)=>{
+          const done=SCALES.some(s=>p.scores[tp]?.[s]!=="");
+          return `<div class="pt-prog-dot" title="${TP_LBL[i]}"
+            style="background:${done?TP_CLR[i]:"#E0E4EC"}">${tp}</div>`;
+        }).join("")}
+        <div style="margin-left:auto;font-size:11px;color:var(--grey);align-self:center">
+          ${doneCount}/5 TPs
+        </div>
+      </div>
+    </div>`;
+  });
+  h += `</div>`;
+  return h;
+}
+
+function addPatient() {
+  const p = makePt();
+  state.patients.unshift(p);
+  save(); editPatient(p.id);
+}
+
+function editPatient(id) {
+  state.editId = id;
+  state.modal = "editPt";
+  renderModal();
+}
+
+function selAndScore(id) {
+  state.selPt = id;
+  state.selTP = "D0";
+  showTab("scores");
+}
+
+// ── Scores tab ────────────────────────────────────────────────────────
+function renderScores() {
+  const pts = state.patients;
+  if(!pts.length) {
+    return `<div class="empty">
+      <div class="icon">📝</div>
+      <h3>No patients enrolled</h3>
+      <p>Add a patient first, then enter scores here</p>
+    </div>`;
+  }
+
+  // Patient selector
+  let h = `<div class="sec-title">Select Patient</div>
+  <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none">`;
+  pts.forEach(p => {
+    const active = p.id === state.selPt;
+    const clr = p.group==="A" ? "#1A7A4A" : "#C0392B";
+    h += `<button onclick="selectPt('${p.id}')"
+      style="flex-shrink:0;padding:7px 13px;border-radius:20px;border:2px solid ${active?clr:"#DDE1EA"};
+      background:${active?clr+"22":"#fff"};color:${active?clr:"var(--grey)"};
+      font-family:var(--font);font-weight:700;font-size:12px;cursor:pointer">
+      ${p.pid||p.crf||"PT"} (${p.group})
+    </button>`;
+  });
+  h += `</div>`;
+
+  const pt = pts.find(p=>p.id===state.selPt);
+  if(!pt) {
+    h += `<div style="text-align:center;padding:30px;color:var(--grey);
+      background:#fff;border-radius:var(--radius)">
+      ← Select a patient above
+    </div>`;
+    return h;
+  }
+
+  const grpClr = pt.group==="A" ? "#1A7A4A" : "#C0392B";
+
+  // TP tabs
+  h += `<div class="tp-tabs">`;
+  TP.forEach((tp,i) => {
+    const done = SCALES.some(s=>pt.scores[tp]?.[s]!=="");
+    const active = tp === state.selTP;
+    h += `<button class="tp-tab${active?" active":""}${done?" done":""}"
+      onclick="selTP('${tp}')"
+      style="${active?`background:${TP_CLR[i]};color:#fff`:""}">
+      ${TP_LBL[i]}
+    </button>`;
+  });
+  h += `</div>`;
+
+  // Score inputs
+  const tp = state.selTP;
+  h += `<div class="card">
+    <div class="card-hdr" style="background:${grpClr}">
+      <span>${pt.pid||"Patient"} — Group ${pt.group}</span>
+      <span style="font-size:11px;opacity:.8">${TP_LBL[TP.indexOf(tp)]}</span>
+    </div>
+    <div class="card-body">`;
+
+  if(tp === "D0") {
+    h += `<div style="background:#FFF3CD;border-radius:8px;padding:8px 10px;
+      font-size:12px;color:#856404;margin-bottom:12px">
+      ⚠️ <strong>Day 0:</strong> Complete ALL scales BEFORE giving first dose
+    </div>`;
+  }
+
+  SCALES.forEach((sc,si) => {
+    const val = pt.scores[tp]?.[sc] ?? "";
+    const d0val = pt.scores["D0"]?.[sc];
+    const d10val = pt.scores["D10"]?.[sc];
+    let delta = "";
+    if(d0val!==""&&d10val!==""&&!isNaN(d0val)&&!isNaN(d10val)) {
+      const dv = Number(d10val)-Number(d0val);
+      delta = `<span class="delta-pill ${dv<0?"delta-down":dv>0?"delta-up":"delta-zero"}">
+        ${dv>0?"+":""}${dv.toFixed(1)}
+      </span>`;
+    }
+    h += `<div class="score-row">
+      <div class="score-label">
+        <div class="name" style="color:${S_CLR[si]}">${sc}</div>
+        <div class="range">${S_INFO[sc].r}</div>
+      </div>
+      <div class="score-input-wrap">
+        ${tp==="D10"&&delta?delta:""}
+        <input type="number" class="score-input${val!==""?" filled":""}"
+          value="${val}" min="0" max="${S_MAX[si]}" step="0.1"
+          placeholder="—"
+          onchange="updateScore('${pt.id}','${tp}','${sc}',this.value)"
+          oninput="this.classList.toggle('filled',this.value!=='')"/>
+      </div>
+    </div>`;
+  });
+
+  h += `<div style="margin-top:12px">
+    <div class="field">
+      <label>Notes / Remarks</label>
+      <textarea rows="2" style="resize:none"
+        onchange="updateNote('${pt.id}',this.value)">${pt.notes||""}</textarea>
+    </div>
+  </div>
+  </div></div>`;
+
+  // Quick guide
+  h += `<div class="sec-title">Scale Reference</div>
+  <div class="card"><div class="card-body">`;
+  SCALES.forEach((sc,si) => {
+    h += `<div style="padding:6px 0;border-bottom:1px solid #F0F3F8;
+      display:flex;gap:8px;align-items:flex-start">
+      <span style="color:${S_CLR[si]};font-weight:700;font-size:12px;
+        flex-shrink:0;width:80px">${sc}</span>
+      <span style="font-size:11px;color:var(--grey);line-height:1.4">
+        ${S_INFO[sc].i}
+      </span>
+    </div>`;
+  });
+  h += `</div></div>`;
+
+  return h;
+}
+
+function selectPt(id) { state.selPt=id; render(); }
+function selTP(tp) { state.selTP=tp; render(); }
+function updateScore(id,tp,sc,val) {
+  const p = state.patients.find(x=>x.id===id);
+  if(p) { p.scores[tp][sc]=val; save(); }
+}
+function updateNote(id,val) {
+  const p = state.patients.find(x=>x.id===id);
+  if(p) { p.notes=val; save(); }
+}
+
+// ── Summary tab ───────────────────────────────────────────────────────
+function renderSummary() {
+  const ga = state.patients.filter(p=>p.group==="A");
+  const gb = state.patients.filter(p=>p.group==="B");
+  let h = `<div class="stat-grid">
+    <div class="stat-box">
+      <div class="stat-val" style="color:#1A7A4A">${ga.length}</div>
+      <div class="stat-lbl">Group A</div>
+      <div class="stat-sub">CBD + OAT</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" style="color:#C0392B">${gb.length}</div>
+      <div class="stat-lbl">Group B</div>
+      <div class="stat-sub">OAT only</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" style="color:#1B3A6B">${state.patients.length}</div>
+      <div class="stat-lbl">Total</div>
+      <div class="stat-sub">Enrolled</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" style="color:#6C3483">
+        ${state.patients.filter(p=>p.scores["D10"]&&SCALES.some(s=>p.scores["D10"][s]!=="")).length}
+      </div>
+      <div class="stat-lbl">Day 10</div>
+      <div class="stat-sub">Complete</div>
+    </div>
+  </div>`;
+
+  SCALES.forEach((sc,si) => {
+    const d0a=getScores(ga,sc,"D0"), d10a=getScores(ga,sc,"D10");
+    const d0b=getScores(gb,sc,"D0"), d10b=getScores(gb,sc,"D10");
+    h += `<div class="card" style="border-top:3px solid ${S_CLR[si]}">
+      <div class="card-hdr" style="background:${S_CLR[si]};padding:8px 14px">
+        <span>${sc}</span>
+        <span style="font-size:11px;opacity:.8">${S_INFO[sc].r}</span>
+      </div>
+      <div class="card-body" style="padding:8px 14px">
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <tr style="border-bottom:1px solid #EEF1F6">
+            <th style="text-align:left;padding:5px 0;color:var(--grey);
+              font-size:11px;font-weight:600">Group</th>
+            ${TP.map(tp=>`<th style="text-align:center;padding:5px 4px;
+              color:var(--grey);font-size:10px;font-weight:600">${tp}</th>`).join("")}
+            <th style="text-align:center;padding:5px 4px;color:var(--grey);
+              font-size:10px;font-weight:600">Δ</th>
+          </tr>`;
+    [[ga,"A","#1A7A4A"],[gb,"B","#C0392B"]].forEach(([grp,lbl,clr]) => {
+      const tpMs = TP.map(tp=>{
+        const s=getScores(grp,sc,tp);
+        return s.length?mean(s).toFixed(1):"—";
+      });
+      const d0s=getScores(grp,sc,"D0"),d10s=getScores(grp,sc,"D10");
+      let deltaStr="—",deltaClr="var(--grey)";
+      if(d0s.length&&d10s.length){
+        const d=(mean(d10s)-mean(d0s));
+        deltaStr=(d>0?"+":"")+d.toFixed(1);
+        deltaClr=d<0?"#1A7A4A":"#C0392B";
+      }
+      h += `<tr>
+        <td style="padding:5px 0;font-weight:700;color:${clr}">Grp ${lbl}</td>
+        ${tpMs.map(m=>`<td style="text-align:center;padding:5px 4px;font-family:var(--mono);
+          font-size:12px">${m}</td>`).join("")}
+        <td style="text-align:center;padding:5px 4px;font-weight:800;
+          font-family:var(--mono);color:${deltaClr}">${deltaStr}</td>
+      </tr>`;
+    });
+    h += `</table></div></div>`;
+  });
+  return h;
+}
+
+// ── Analysis tab ──────────────────────────────────────────────────────
+function renderAnalysis() {
+  const ga = state.patients.filter(p=>p.group==="A");
+  const gb = state.patients.filter(p=>p.group==="B");
+  let h = `<div style="background:#FFF3CD;border-radius:10px;padding:10px 12px;
+    font-size:12px;color:#856404;margin-bottom:12px;line-height:1.5">
+    <strong>Live calculations</strong> — updates as you enter data.
+    Run final analyses in SPSS for thesis. Use Export → Statistics CSV.
+  </div>`;
+
+  SCALES.forEach((sc,si) => {
+    const d0a=getScores(ga,sc,"D0"),d10a=getScores(ga,sc,"D10");
+    const d0b=getScores(gb,sc,"D0"),d10b=getScores(gb,sc,"D10");
+    const baseT=tTest(d0a,d0b), endT=tTest(d10a,d10b);
+    const preA=ga.filter(p=>p.scores.D0?.[sc]!==""&&p.scores.D10?.[sc]!=="")
+      .map(p=>Number(p.scores.D0[sc]));
+    const postA=ga.filter(p=>p.scores.D0?.[sc]!==""&&p.scores.D10?.[sc]!=="")
+      .map(p=>Number(p.scores.D10[sc]));
+    const wA=wilcox(preA,postA);
+    const preB=gb.filter(p=>p.scores.D0?.[sc]!==""&&p.scores.D10?.[sc]!=="")
+      .map(p=>Number(p.scores.D0[sc]));
+    const postB=gb.filter(p=>p.scores.D0?.[sc]!==""&&p.scores.D10?.[sc]!=="")
+      .map(p=>Number(p.scores.D10[sc]));
+    const wB=wilcox(preB,postB);
+    const eff=cohenD(d10a,d10b);
+
+    h += `<div class="card" style="border-top:3px solid ${S_CLR[si]}">
+      <div class="card-hdr" style="background:${S_CLR[si]}">
+        <span>${sc}</span>
+        <span style="font-size:11px;opacity:.8">n(A)=${ga.length} n(B)=${gb.length}</span>
+      </div>
+      <div class="card-body" style="padding:8px">
+        <div style="overflow-x:auto">
+        <table class="analysis-table">
+          <tr>
+            <th>Test</th><th>Comparison</th>
+            <th>Stat</th><th>p-value</th>
+          </tr>
+          <tr>
+            <td>t-test</td>
+            <td>D0: A vs B<br><small style="color:var(--grey)">(baseline check)</small></td>
+            <td><span style="font-family:var(--mono)">t=${baseT?baseT.t:"—"}</span></td>
+            <td>${fmtP(baseT?.p)}</td>
+          </tr>
+          <tr>
+            <td>t-test</td>
+            <td>D10: A vs B<br><small style="color:var(--grey)">(primary endpoint)</small></td>
+            <td><span style="font-family:var(--mono)">t=${endT?endT.t:"—"}</span></td>
+            <td>${fmtP(endT?.p)}</td>
+          </tr>
+          <tr>
+            <td>Wilcoxon</td>
+            <td>Group A: D0→D10</td>
+            <td><span style="font-family:var(--mono)">z=${wA?wA.z:"—"}</span></td>
+            <td>${fmtP(wA?.p)}</td>
+          </tr>
+          <tr>
+            <td>Wilcoxon</td>
+            <td>Group B: D0→D10</td>
+            <td><span style="font-family:var(--mono)">z=${wB?wB.z:"—"}</span></td>
+            <td>${fmtP(wB?.p)}</td>
+          </tr>
+          <tr style="background:#F0F4FF">
+            <td colspan="2"><strong>Cohen's d (D10: A vs B)</strong></td>
+            <td colspan="2">
+              <strong style="font-family:var(--mono)">${eff?eff.toFixed(3):"—"}</strong>
+              ${eff?`<span style="font-size:10px;color:var(--grey);margin-left:6px">
+              ${parseFloat(eff)>=0.8?"Large":parseFloat(eff)>=0.5?"Medium":
+                parseFloat(eff)>=0.2?"Small":"Negligible"}</span>`:""}
+            </td>
+          </tr>
+        </table>
+        </div>
+        <div style="font-size:10px;color:var(--grey);margin-top:6px;font-style:italic">
+          *** p&lt;0.001 · ** p&lt;0.01 · * p&lt;0.05 · ns not significant
+        </div>
+      </div></div>`;
+  });
+  return h;
+}
+
+// ── Export tab ────────────────────────────────────────────────────────
+function renderExport() {
+  return `
+  <div class="sec-title">Export Options</div>
+  <div class="export-opt" onclick="exportCSV()">
+    <div class="export-icon">📊</div>
+    <div>
+      <div class="export-label">Master Data CSV</div>
+      <div class="export-desc">All patients · all scores · SPSS-ready</div>
+    </div>
+  </div>
+  <div class="export-opt" onclick="exportAE()">
+    <div class="export-icon">⚠️</div>
+    <div>
+      <div class="export-label">Adverse Events CSV</div>
+      <div class="export-desc">Full SAFTEE log</div>
+    </div>
+  </div>
+  <div class="export-opt" onclick="exportStats()">
+    <div class="export-icon">🔬</div>
+    <div>
+      <div class="export-label">Statistics Summary</div>
+      <div class="export-desc">Means, SDs, test results — paste into thesis</div>
+    </div>
+  </div>
+  <div class="export-opt" onclick="exportJSON()">
+    <div class="export-icon">💾</div>
+    <div>
+      <div class="export-label">Save App Data (JSON)</div>
+      <div class="export-desc">Backup — reload to restore your data</div>
+    </div>
+  </div>
+  <div class="export-opt" onclick="document.getElementById('import-file').click()">
+    <div class="export-icon">📂</div>
+    <div>
+      <div class="export-label">Load Saved Data</div>
+      <div class="export-desc">Restore from a previously saved JSON file</div>
+    </div>
+  </div>
+  <input type="file" id="import-file" accept=".json" style="display:none"
+    onchange="importJSON(this)"/>
+
+  <div class="sec-title">SPSS Import Guide</div>
+  <div class="card"><div class="card-body" style="font-size:12px;line-height:1.7;color:var(--grey)">
+    <p><strong style="color:#2D3748">1.</strong> Tap "Master Data CSV" → file downloads</p>
+    <p><strong style="color:#2D3748">2.</strong> SPSS → File → Import Data → CSV</p>
+    <p><strong style="color:#2D3748">3.</strong> Check: Row 1 = variable names ✓</p>
+    <p><strong style="color:#2D3748">4.</strong> Analyze → GLM → Repeated Measures</p>
+    <p style="padding-left:16px;color:#1B3A6B">Within-subject: Time (5 levels)</p>
+    <p style="padding-left:16px;color:#1B3A6B">Between-subjects: Group (A vs B)</p>
+    <p><strong style="color:#2D3748">5.</strong> Group×Time interaction = primary test</p>
+  </div></div>`;
+}
+
+function exportCSV() {
+  const hdrs = ["CRF","PatientID","Group","Age","Sex","OpioidType","Duration",
+    ...TP.flatMap(tp=>SCALES.map(sc=>`${sc}_${tp}`))];
+  const rows = state.patients.map(p=>[
+    p.crf,p.pid,p.group,p.age,p.sex,p.opioid,p.dur,
+    ...TP.flatMap(tp=>SCALES.map(sc=>p.scores[tp]?.[sc]??""))
+  ]);
+  dl([hdrs,...rows].map(r=>r.join(",")).join("\n"),
+    "CBD_OAT_Data.csv","text/csv");
+  toast("✅ CSV downloaded — import into SPSS");
+}
+function exportAE() {
+  const hdrs=["CRF","PatientID","Group","TP","Event","System","Severity","CBDRelation","Action","Resolved"];
+  const rows=state.patients.flatMap(p=>(p.aes||[]).map(ae=>[
+    p.crf,p.pid,p.group,ae.tp,ae.event,ae.system,ae.sev,ae.rel,ae.action,ae.resolved
+  ]));
+  dl([hdrs,...rows].map(r=>r.join(",")).join("\n"),
+    "CBD_OAT_AE.csv","text/csv");
+  toast("✅ AE log downloaded");
+}
+function exportStats() {
+  const ga=state.patients.filter(p=>p.group==="A");
+  const gb=state.patients.filter(p=>p.group==="B");
+  let txt="CBD OAT STUDY — STATISTICAL SUMMARY\n"+new Date().toLocaleDateString()+"\n\n";
+  txt+=`Group A (CBD+OAT): n=${ga.length}\nGroup B (OAT only): n=${gb.length}\n\n`;
+  SCALES.forEach(sc=>{
+    txt+=`${sc}\n${"-".repeat(40)}\n`;
+    ["A","B"].forEach(g=>{
+      const grp=g==="A"?ga:gb;
+      TP.forEach(tp=>{
+        const s=getScores(grp,sc,tp);
+        if(s.length) txt+=`Grp${g} ${tp}: M=${mean(s).toFixed(2)} SD=${(sd(s)||0).toFixed(2)} n=${s.length}\n`;
+      });
+    });
+    txt+="\n";
+  });
+  dl(txt,"CBD_OAT_Statistics.txt","text/plain");
+  toast("✅ Statistics exported");
+}
+function exportJSON() {
+  dl(JSON.stringify(state.patients,null,2),"CBD_OAT_Backup.json","application/json");
+  toast("✅ Backup saved — keep this file safe");
+}
+function importJSON(input) {
+  const f=input.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=e=>{
+    try {
+      const d=JSON.parse(e.target.result);
+      state.patients=d; save(); render();
+      toast("✅ Data loaded — "+d.length+" patients");
+    } catch(err) { toast("❌ Invalid file"); }
+  };
+  r.readAsText(f);
+}
+function dl(data,filename,type) {
+  const a=document.createElement("a");
+  a.href="data:"+type+";charset=utf-8,"+encodeURIComponent(data);
+  a.download=filename; a.click();
+}
+
+// ── Modal: edit patient ───────────────────────────────────────────────
+function renderModal() {
+  let existing = document.querySelector(".modal-overlay");
+  if(existing) existing.remove();
+
+  const pt = state.patients.find(p=>p.id===state.editId);
+  if(!pt||state.modal!=="editPt") return;
+
+  const grpClr = pt.group==="A"?"#1A7A4A":"#C0392B";
+  const html = `
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <div class="modal-hdr">
+        <h2>Patient Details</h2>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="field">
+        <label>CRF Number</label>
+        <input type="text" value="${pt.crf}" id="ed-crf" placeholder="e.g. CRF-001"/>
+      </div>
+      <div class="field">
+        <label>Patient ID / Name</label>
+        <input type="text" value="${pt.pid}" id="ed-pid" placeholder="Initials or ID"/>
+      </div>
+      <div class="field grid2">
+        <div>
+          <label>Group</label>
+          <select id="ed-grp">
+            <option value="A" ${pt.group==="A"?"selected":""}>A — CBD + OAT</option>
+            <option value="B" ${pt.group==="B"?"selected":""}>B — OAT only</option>
+          </select>
+        </div>
+        <div>
+          <label>Sex</label>
+          <select id="ed-sex">
+            <option value="M" ${pt.sex==="M"?"selected":""}>Male</option>
+            <option value="F" ${pt.sex==="F"?"selected":""}>Female</option>
+          </select>
+        </div>
+      </div>
+      <div class="field grid2">
+        <div>
+          <label>Age (years)</label>
+          <input type="number" value="${pt.age}" id="ed-age" min="18" max="60"/>
+        </div>
+        <div>
+          <label>Duration Use (mths)</label>
+          <input type="number" value="${pt.dur}" id="ed-dur"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Opioid Type</label>
+        <select id="ed-opioid">
+          <option ${pt.opioid==="Heroin"?"selected":""}>Heroin</option>
+          <option ${pt.opioid==="Pharmaceutical"?"selected":""}>Pharmaceutical</option>
+          <option ${pt.opioid==="Opium"?"selected":""}>Opium</option>
+          <option ${pt.opioid==="Mixed"?"selected":""}>Mixed</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Enrolment Date</label>
+        <input type="date" value="${pt.date}" id="ed-date"/>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <button class="btn btn-full" style="background:${grpClr};color:#fff"
+          onclick="savePatient()">Save Patient</button>
+        <button class="btn btn-sm btn-outline" style="flex-shrink:0;color:var(--red);
+          border-color:var(--red)" onclick="deletePatient('${pt.id}')">Delete</button>
+      </div>
+    </div>
+  </div>`;
+
+  document.body.insertAdjacentHTML("beforeend", html);
+}
+
+function savePatient() {
+  const pt = state.patients.find(p=>p.id===state.editId);
+  if(!pt) return;
+  pt.crf = document.getElementById("ed-crf")?.value||"";
+  pt.pid = document.getElementById("ed-pid")?.value||"";
+  pt.group=document.getElementById("ed-grp")?.value||"A";
+  pt.sex = document.getElementById("ed-sex")?.value||"M";
+  pt.age = document.getElementById("ed-age")?.value||"";
+  pt.dur = document.getElementById("ed-dur")?.value||"";
+  pt.opioid=document.getElementById("ed-opioid")?.value||"Heroin";
+  pt.date = document.getElementById("ed-date")?.value||"";
+  save(); closeModal(); render();
+  toast("✅ Patient saved");
+}
+
+function deletePatient(id) {
+  if(confirm("Delete this patient and all their data?")) {
+    state.patients = state.patients.filter(p=>p.id!==id);
+    if(state.selPt===id) state.selPt=null;
+    save(); closeModal(); render();
+    toast("Patient deleted");
+  }
+}
+
+function closeModal() {
+  const el=document.querySelector(".modal-overlay");
+  if(el) el.remove();
+  state.modal=null;
+}
+
+// ── Init ──────────────────────────────────────────────────────────────
+// ── PWA Install ────────────────────────────────────────
+let _installPrompt = null;
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _installPrompt = e;
+  document.getElementById('install-banner').style.display = 'flex';
+});
+window.addEventListener('appinstalled', () => {
+  document.getElementById('install-banner').style.display = 'none';
+  toast('✅ App installed on your home screen!', 3000);
+});
+function triggerInstall() {
+  if (_installPrompt) {
+    _installPrompt.prompt();
+    _installPrompt.userChoice.then(() => { _installPrompt = null; });
+  }
+}
+load(); render();
+</script>
+</body>
+</html>
